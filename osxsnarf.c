@@ -14,8 +14,7 @@ static void fswrite(Req *);
 enum {
 	Qroot = 0,
 	Qsnarf,
-	SnarfSize = 64*1024,
-	StackSize = 8 * 1024,
+	SnarfSize = 3*64*1024,
 };
 
 Srv fs=
@@ -26,8 +25,7 @@ Srv fs=
 
 static PasteboardRef appleclip;
 
-static char snarf[3*SnarfSize+1];
-static Rune rsnarf[SnarfSize+1];
+static char snarf[SnarfSize+1];
 
 static char *deflisten = "tcp!*!18001";
 
@@ -66,7 +64,6 @@ fswrite(Req *r)
 	memmove(snarf+r->ifcall.offset, r->ifcall.data, r->ifcall.count);
 	snarf[r->ifcall.offset+r->ifcall.count] = '\0';
 
-	runesnprint(rsnarf, nelem(rsnarf), "%s", snarf);
 	if(PasteboardClear(appleclip) != noErr){
 		respond(r, "apple pasteboard clear failed");
 		goto werr;
@@ -76,14 +73,14 @@ fswrite(Req *r)
 		respond(r, "apple pasteboard cannot assert ownership");
 		goto werr;
 	}
-	cfdata = CFDataCreate(kCFAllocatorDefault, (uchar*)rsnarf, runestrlen(rsnarf)*2);
+	cfdata = CFDataCreate(kCFAllocatorDefault, (uint8_t*)snarf, strlen(snarf));
 
 	if(cfdata == nil){
 		respond(r, "apple pasteboard cfdatacreate failed");
 		goto werr;
 	}
 	if(PasteboardPutItemFlavor(appleclip, (PasteboardItemID)1,
-		CFSTR("public.utf16-plain-text"), cfdata, 0) != noErr){
+		CFSTR("public.utf8-plain-text"), cfdata, 0) != noErr){
 		respond(r, "apple pasteboard putitem failed");
 		CFRelease(cfdata);
 		goto werr;
@@ -138,16 +135,16 @@ fsread(Req *r)
 		for(flavorIndex = 0; flavorIndex < flavorCount; ++flavorIndex){
 			CFStringRef flavorType;
 			flavorType = (CFStringRef)CFArrayGetValueAtIndex(flavorTypeArray, flavorIndex);
-			if (UTTypeConformsTo(flavorType, CFSTR("public.utf16-plain-text"))){
+			if (UTTypeConformsTo(flavorType, CFSTR("public.utf8-plain-text"))){
 				if((err = PasteboardCopyItemFlavorData(appleclip, itemID,
-					CFSTR("public.utf16-plain-text"), &cfdata)) != noErr){
+					CFSTR("public.utf8-plain-text"), &cfdata)) != noErr){
 					respond(r, "apple pasteboard CopyItem failed");
 					goto rerr;
 				}
 				CFIndex length = CFDataGetLength(cfdata);
-				if (length > sizeof rsnarf) length = sizeof rsnarf;
-				CFDataGetBytes(cfdata, CFRangeMake(0, length), (uint8_t *)rsnarf);
-				snprint(snarf, sizeof snarf, "%.*S", length/sizeof(Rune), rsnarf);
+				if (length > sizeof snarf - 1) length = sizeof snarf - 1;
+				CFDataGetBytes(cfdata, CFRangeMake(0, length), (uint8_t *)snarf);
+				snarf[length] = '\0';
 				char *s = snarf;
 				while (*s) {
 					if (*s == '\r') *s = '\n';

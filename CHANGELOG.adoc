@@ -1,0 +1,5 @@
+CHANGELOG
+=========
+
+* Store and retrieve utf8 text (don't translate).  Fixes garbage when run on
+  Mac OS X 10.14.4
