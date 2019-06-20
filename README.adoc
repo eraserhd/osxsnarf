@@ -1,0 +1,7 @@
+osxsnarf
+========
+
+A simple file server capable of replacing /dev/snarf with the snarf buffer of
+your local OSX machine.
+
+This was taken from http://mirtchovski.com/p9/osxsnarf/[mirtchovski.com].
