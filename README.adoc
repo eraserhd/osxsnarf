@@ -1,8 +1,7 @@
 osxsnarf
 ========
 
-A simple file server capable of replacing /dev/snarf with the snarf buffer of
-your local OSX machine.
+A Plan 9-inspired way to share your OS X clipboard to multiple hosts.
 
 This was taken from http://mirtchovski.com/p9/osxsnarf/[mirtchovski.com].
 
@@ -18,8 +17,8 @@ $ 9 9c osxsnarf.c
 $ 9 9l -o osxsnarf osxsnarf.o
 ----
 
-Running
--------
+Running and Usage
+-----------------
 
 You can have it listen on a Unix socket and post as a service where plan9port
 might expect to find it.
@@ -30,9 +29,13 @@ $ 9 ./osxsnarf 'unix!'"$(9 namespace)/snarf"
 $ 9 9p ls snarf
 snarf
 $ printf 'hello, world!\n' |9 9p write snarf/snarf
+$ pbpaste
+hello, world!
 $ 9 9p read snarf/snarf
 hello, world!
-$ 
+$ printf 'goodbye, world!\n' |pbcopy
+$ 9 9p read snarf/snarf
+goodbye, world!
 ----
 
 The weird quoting is to avoid Mac OS's default bash from interpreting the
@@ -69,4 +72,9 @@ map global user -docstring 'paste (after) from clipboard' p '!9 9p read snarf/sn
 map global user -docstring 'paste (before) from clipboard' P '<a-!>9 9p read snarf/snarf<ret>'
 map global user -docstring 'yank to clipboard' y '<a-|>9 9p write  snarf/snarf<ret>:echo -markup %{{Information}copied selection to system clipboard}<ret>'
 map global user -docstring 'replace from clipboard' R '|9 9p read snarf/snarf<ret>'
----
+----
+
+Bugs
+----
+
+* There's a fixed buffer size for text, about 192Kb.  This should be dynamically allocated.
