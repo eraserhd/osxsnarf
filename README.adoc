@@ -5,3 +5,68 @@ A simple file server capable of replacing /dev/snarf with the snarf buffer of
 your local OSX machine.
 
 This was taken from http://mirtchovski.com/p9/osxsnarf/[mirtchovski.com].
+
+Installation
+------------
+
+Assuming https://9fans.github.io/plan9port/[plan9port] is installed, you can
+build with the following commands:
+
+[source,sh]
+----
+$ 9 9c osxsnarf.c
+$ 9 9l -o osxsnarf osxsnarf.o
+----
+
+Running
+-------
+
+You can have it listen on a Unix socket and post as a service where plan9port
+might expect to find it.
+
+[source,sh]
+----
+$ 9 ./osxsnarf 'unix!'"$(9 namespace)/snarf"
+$ 9 9p ls snarf
+snarf
+$ printf 'hello, world!\n' |9 9p write snarf/snarf
+$ 9 9p read snarf/snarf
+hello, world!
+$ 
+----
+
+The weird quoting is to avoid Mac OS's default bash from interpreting the
+`!`.
+
+Forwarding the Snarf Service
+----------------------------
+
+You can share the service with other machines using `9 import` or `autossh`.
+An example how to do this with `autossh`:
+
+[source,sh]
+----
+autossh -M 0 -f \
+    -o 'ServerAliveInterval 30' \
+    -o 'ServerAliveCountMax 3' \
+    -o 'ExitOnForwardFailure yes' \
+    -R"/path/to/remote/namespace/snarf:$(9 namespace)/snarf" \
+    -T -N crunch.eraserhead.net
+----
+
+While this is running, both systems will have access to the OSX pasteboard.
+
+Configuring Kakoune
+-------------------
+
+The following mappings are useful in Kakoune to interact with the system
+pasteboard via the "snarf" service:
+
+----
+# System clipboard handling
+# ─────────────────────────
+map global user -docstring 'paste (after) from clipboard' p '!9 9p read snarf/snarf<ret>'
+map global user -docstring 'paste (before) from clipboard' P '<a-!>9 9p read snarf/snarf<ret>'
+map global user -docstring 'yank to clipboard' y '<a-|>9 9p write  snarf/snarf<ret>:echo -markup %{{Information}copied selection to system clipboard}<ret>'
+map global user -docstring 'replace from clipboard' R '|9 9p read snarf/snarf<ret>'
+---
