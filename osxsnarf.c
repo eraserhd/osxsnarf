@@ -34,7 +34,7 @@ RWLock l;
 void
 usage(void)
 {
-	fprint(2, "usage: %s [-D] [listen]\n", argv0);
+	fprint(2, "usage: %s [-f] [-D] [listen]\n", argv0);
 	sysfatal("usage");
 }
 
@@ -169,6 +169,9 @@ threadmain(int argc, char **argv)
 	char *lstn = deflisten;
 
 	ARGBEGIN{
+	case 'f':
+		fs.foreground = 1;
+		break;
 	case 'D':
 		chatty9p++;
 		break;
