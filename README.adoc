@@ -50,6 +50,7 @@ An example how to do this with `autossh`:
 [source,sh]
 ----
 autossh -M 0 -f \
+    -o 'StreamLocalBindUnlink yes' \
     -o 'ServerAliveInterval 30' \
     -o 'ServerAliveCountMax 3' \
     -o 'ExitOnForwardFailure yes' \
@@ -58,6 +59,10 @@ autossh -M 0 -f \
 ----
 
 While this is running, both systems will have access to the OSX pasteboard.
+
+`StreamLocalBindUnlink` instructs ssh to remove the forwarded unix socket on
+disconnect.  Without this, if the connection is broken it will fail to
+re-establish, since ssh will not recreate the socket.
 
 Configuring Kakoune
 -------------------
