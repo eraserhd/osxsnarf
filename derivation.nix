@@ -8,8 +8,7 @@ stdenv.mkDerivation {
   buildInputs = [ plan9port darwin.apple_sdk.frameworks.Carbon ];
 
   installPhase = ''
-    mkdir -p $out/bin
-    cp osxsnarf $out/bin/
+    make prefix=$out install
   '';
 
   meta = with lib; {

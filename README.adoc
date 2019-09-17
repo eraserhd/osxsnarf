@@ -8,13 +8,13 @@ This was taken from http://mirtchovski.com/p9/osxsnarf/[mirtchovski.com].
 Installation
 ------------
 
-Assuming https://9fans.github.io/plan9port/[plan9port] is installed, you can
-build with the following commands:
+Assuming https://9fans.github.io/plan9port/[plan9port] is installed, and `9`
+is in the path, you can build with the following commands:
 
 [source,sh]
 ----
-$ 9 9c osxsnarf.c
-$ 9 9l -o osxsnarf osxsnarf.o
+$ make
+$ sudo make prefix=/usr/local install
 ----
 
 Running and Usage
