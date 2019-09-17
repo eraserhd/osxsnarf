@@ -1,11 +1,11 @@
-{ stdenv, lib, plan9port, darwin, which, ... }:
+{ stdenv, lib, plan9port, darwin, ... }:
 
 stdenv.mkDerivation {
   pname = "osxsnarf";
   version = "0.1.0";
   src = ./.;
 
-  buildInputs = [ plan9port which darwin.apple_sdk.frameworks.Carbon ];
+  buildInputs = [ plan9port darwin.apple_sdk.frameworks.Carbon ];
 
   buildPhase = ''
     9 9c osxsnarf.c
