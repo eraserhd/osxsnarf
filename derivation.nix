@@ -7,11 +7,6 @@ stdenv.mkDerivation {
 
   buildInputs = [ plan9port darwin.apple_sdk.frameworks.Carbon ];
 
-  buildPhase = ''
-    9 9c osxsnarf.c
-    9 9l -o osxsnarf osxsnarf.o
-  '';
-
   installPhase = ''
     mkdir -p $out/bin
     cp osxsnarf $out/bin/
