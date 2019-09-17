@@ -1,13 +1,14 @@
 CHANGELOG
 =========
 
-https://github.com/eraserhd/rep/compare/v0.1.0...HEAD[Unreleased]
+https://github.com/eraserhd/rep/compare/v0.1.0...v0.1.1[Unreleased]
 -----------------------------------------------------------------
 
 
 v0.1.0 - 2019-09-17
 -------------------
 
+* Add Makefile
 * Add UNLICENSE
 * `-f` option processes in foreground.
 * Store and retrieve utf8 text (don't translate).  Fixes garbage when run on
