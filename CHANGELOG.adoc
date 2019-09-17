@@ -1,7 +1,8 @@
 CHANGELOG
 =========
 
-== Unreleased
+v0.1.0 - 2019-09-17
+-------------------
 
 * Add UNLICENSE
 * `-f` option processes in foreground.
