@@ -13,6 +13,6 @@ stdenv.mkDerivation {
     homepage = https://github.com/eraserhd/osxsnarf;
     license = licenses.unlicense;
     platforms = platforms.darwin;
-    maintainer = [ maintainers.eraserhd ];
+    maintainers = [ maintainers.eraserhd ];
   };
 }
