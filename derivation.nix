@@ -6,10 +6,7 @@ stdenv.mkDerivation {
   src = ./.;
 
   buildInputs = [ plan9port darwin.apple_sdk.frameworks.Carbon ];
-
-  installPhase = ''
-    make prefix=$out install
-  '';
+  makeFlags = [ "prefix=$(out)" ];
 
   meta = with lib; {
     description = "A Plan 9-inspired way to share your OS X clipboard.";
