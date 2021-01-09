@@ -34,7 +34,7 @@ RWLock l;
 void
 usage(void)
 {
-	fprint(2, "usage: %s [-f] [-D] [listen]\n", argv0);
+	fprint(2, "usage: %s [-f] [-D] [-m mtpt] [listen]\n", argv0);
 	sysfatal("usage");
 }
 
@@ -167,6 +167,7 @@ threadmain(int argc, char **argv)
 {
 	File *rootf;
 	char *lstn = deflisten;
+	char *mtpt = nil;
 
 	ARGBEGIN{
 	case 'f':
@@ -175,7 +176,9 @@ threadmain(int argc, char **argv)
 	case 'D':
 		chatty9p++;
 		break;
-		break;
+    case 'm':
+        mtpt = EARGF((usage()));
+        break;
 	default:
 		usage();
 	}ARGEND
@@ -193,7 +196,7 @@ threadmain(int argc, char **argv)
 	if(PasteboardCreate(kPasteboardClipboard, &appleclip) != noErr)
 		sysfatal("pasteboard create failed");
 
-	threadpostmountsrv(&fs, lstn, nil, MREPL|MCREATE);
+	threadpostmountsrv(&fs, lstn, mtpt, MREPL|MCREATE);
 
 	threadexits(nil);
 }
